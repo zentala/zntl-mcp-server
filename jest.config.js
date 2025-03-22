@@ -12,10 +12,11 @@ export default {
     ],
   },
   moduleNameMapper: {
-    '^(\\.{1,2}/.*)\\.js$': '$1'
+    '^(\\.{1,2}/.*)\\.js$': '$1',
+    '^node:(.*)$': '$1'
   },
   transformIgnorePatterns: [
-    'node_modules/(?!@modelcontextprotocol/sdk/.*)'
+    'node_modules/(?!@modelcontextprotocol/sdk/.*|pkce-challenge/.*)'
   ],
   setupFiles: ['./jest.setup.js'],
   moduleDirectories: ['node_modules'],
