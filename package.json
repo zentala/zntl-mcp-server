@@ -1,20 +1,16 @@
 {
   "name": "mcp-server",
   "version": "1.0.0",
-  "description": "MCP Server for Transcripter project",
+  "description": "Model Context Protocol (MCP) server implementation",
   "type": "module",
-  "main": "dist/esm/index.js",
+  "main": "dist/esm/src/start.js",
   "scripts": {
-    "build": "npm run build:esm && npm run build:cjs",
-    "build:esm": "tsc -p tsconfig.prod.json && node -e \"fs.writeFileSync('dist/esm/package.json', JSON.stringify({type:'module'}, null, 2))\"",
-    "build:cjs": "tsc -p tsconfig.cjs.json && node -e \"fs.writeFileSync('dist/cjs/package.json', JSON.stringify({type:'commonjs'}, null, 2))\"",
-    "lint": "eslint src/",
+    "prestart": "npm run build",
+    "build": "npm run build:esm",
+    "build:esm": "tsc -p tsconfig.json",
+    "start": "node dist/esm/src/start.js",
     "test": "jest",
-    "start": "npm run server",
-    "server": "node src/cli.js server",
-    "client": "node examples/client.js",
-    "news": "node examples/news-example.js",
-    "example": "node src/cli.js server",
+    "dev": "ts-node-esm src/start.ts",
     "clean": "rimraf dist"
   },
   "keywords": [

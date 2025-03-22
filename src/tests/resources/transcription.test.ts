@@ -1,7 +1,7 @@
 /**
  * Tests for the transcription resource provider
  */
-import { TranscriptionResourceProvider } from '../../resources/transcription';
+import { TranscriptionResourceProvider } from '../../resources/transcription.js';
 
 describe('TranscriptionResourceProvider', () => {
   let provider: TranscriptionResourceProvider;
