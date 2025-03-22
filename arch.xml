@@ -1,0 +1,1452 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TranscripterArchitecture version="1.0">
+  <Metadata>
+    <ProjectName>Transcripter</ProjectName>
+    <Description>Advanced audio transcription and analysis system with AI capabilities</Description>
+    <Version>1.0.0</Version>
+    <LastUpdated>2025-03-22</LastUpdated>
+    <Authors>
+      <Author>Transcripter Team</Author>
+    </Authors>
+    <Tags>
+      <Tag>audio-transcription</Tag>
+      <Tag>ai-analysis</Tag>
+      <Tag>typescript</Tag>
+      <Tag>react</Tag>
+      <Tag>node.js</Tag>
+      <Tag>prisma</Tag>
+      <Tag>mcp</Tag>
+    </Tags>
+  </Metadata>
+  
+  <Vision>
+    <Overview>
+      Transcripter aims to transform how users interact with audio content by providing seamless transcription, 
+      deep analysis, and intelligent organization capabilities. The platform bridges the gap between 
+      spoken communication and text-based analysis, making audio content as accessible and useful as written text.
+    </Overview>
+    
+    <CorePrinciples>
+      <Principle name="Accuracy First">
+        <Description>Transcription quality and analytical precision are paramount. All features prioritize accuracy.</Description>
+      </Principle>
+      <Principle name="AI Augmentation">
+        <Description>Artificial intelligence enhances but doesn't replace human judgment, providing insights that humans can verify and refine.</Description>
+      </Principle>
+      <Principle name="Modular Design">
+        <Description>Each component is self-contained with clear interfaces, enabling independent development and testing.</Description>
+      </Principle>
+      <Principle name="Progressive Enhancement">
+        <Description>Core features work without advanced capabilities, with additional functionality layered on top.</Description>
+      </Principle>
+      <Principle name="User-Centered">
+        <Description>All features and interfaces are designed around actual user workflows and needs.</Description>
+      </Principle>
+    </CorePrinciples>
+    
+    <StrategicGoals>
+      <Goal timeframe="Short-term">
+        <Description>Establish reliable transcription pipeline with basic analysis</Description>
+        <Metrics>
+          <Metric>Transcription accuracy above 95%</Metric>
+          <Metric>Analysis completion in under 2 minutes</Metric>
+          <Metric>Support for 5+ audio formats</Metric>
+        </Metrics>
+      </Goal>
+      <Goal timeframe="Medium-term">
+        <Description>Develop advanced content organization and discovery capabilities</Description>
+        <Metrics>
+          <Metric>Automatic categorization accuracy above 85%</Metric>
+          <Metric>Cross-reference capability between transcriptions</Metric>
+          <Metric>Advanced search with semantic understanding</Metric>
+        </Metrics>
+      </Goal>
+      <Goal timeframe="Long-term">
+        <Description>Create ecosystem for transcription-based workflows and integrations</Description>
+        <Metrics>
+          <Metric>API adoption by 10+ third-party services</Metric>
+          <Metric>Developer SDK with comprehensive documentation</Metric>
+          <Metric>Marketplace for transcription-enhancement plugins</Metric>
+        </Metrics>
+      </Goal>
+    </StrategicGoals>
+  </Vision>
+  
+  <Architecture>
+    <ArchitecturalStyle>
+      <PrimaryStyle>Layered Architecture</PrimaryStyle>
+      <SecondaryStyles>
+        <Style>Microservices</Style>
+        <Style>Event-Driven</Style>
+        <Style>Repository Pattern</Style>
+      </SecondaryStyles>
+      <Rationale>
+        A layered architecture provides clear separation of concerns while allowing for future migration 
+        to microservices as individual components mature. The event-driven aspects enable real-time 
+        updates and asynchronous processing for long-running tasks.
+      </Rationale>
+    </ArchitecturalStyle>
+    
+    <Layers>
+      <!-- Core Layer - Business Logic -->
+      <Layer name="Core" order="1">
+        <Description>Central business logic and domain models implementing the application's core capabilities</Description>
+        <Components>
+          <Component name="TranscriptionEngine" type="Service">
+            <Description>Handles audio file transcription using ElevenLabs API</Description>
+            <Responsibilities>
+              <Responsibility>Process audio files into text</Responsibility>
+              <Responsibility>Handle transcription API communication</Responsibility>
+              <Responsibility>Manage transcription formats and quality</Responsibility>
+              <Responsibility>Implement retry logic for failed transcriptions</Responsibility>
+              <Responsibility>Optimize audio for better transcription results</Responsibility>
+              <Responsibility>Support multiple transcription providers</Responsibility>
+            </Responsibilities>
+            <Dependencies>
+              <Dependency type="External">ElevenLabsClient</Dependency>
+              <Dependency type="Internal">AudioProcessor</Dependency>
+              <Dependency type="Internal">TranscriptionRepository</Dependency>
+            </Dependencies>
+            <Features>
+              <Feature name="MultiProviderSupport">
+                <Description>Support for multiple transcription providers (ElevenLabs, OpenAI Whisper, Google Speech)</Description>
+                <Status>Planned</Status>
+              </Feature>
+              <Feature name="StreamingTranscription">
+                <Description>Real-time transcription of audio streams</Description>
+                <Status>Future</Status>
+              </Feature>
+              <Feature name="BatchProcessing">
+                <Description>Efficient processing of multiple files with priority queue</Description>
+                <Status>Implemented</Status>
+              </Feature>
+              <Feature name="TranscriptionEnhancement">
+                <Description>Post-processing improvements including punctuation, formatting, and error correction</Description>
+                <Status>In Development</Status>
+              </Feature>
+            </Features>
+            <Implementation>
+              <Language>TypeScript</Language>
+              <Files>
+                <File path="workspace/packages/core/src/transcribe.ts">Main transcription engine implementation</File>
+                <File path="workspace/packages/core/src/providers/elevenlabs.ts">ElevenLabs provider implementation</File>
+                <File path="workspace/packages/core/src/providers/whisper.ts">OpenAI Whisper provider implementation</File>
+              </Files>
+              <Patterns>
+                <Pattern>Strategy Pattern for multiple transcription providers</Pattern>
+                <Pattern>Factory Pattern for provider instantiation</Pattern>
+                <Pattern>Observer Pattern for transcription progress updates</Pattern>
+              </Patterns>
+            </Implementation>
+          </Component>
+          
+          <Component name="AnalysisEngine" type="Service">
+            <Description>Performs content analysis on transcriptions using AI models</Description>
+            <Responsibilities>
+              <Responsibility>Extract insights from transcriptions</Responsibility>
+              <Responsibility>Generate summaries and key points</Responsibility>
+              <Responsibility>Categorize and tag content</Responsibility>
+              <Responsibility>Identify sentiment and topics</Responsibility>
+              <Responsibility>Extract action items and follow-ups</Responsibility>
+              <Responsibility>Generate metadata for search and discovery</Responsibility>
+            </Responsibilities>
+            <Dependencies>
+              <Dependency type="External">OpenRouterClient</Dependency>
+              <Dependency type="External">ClaudeAPIClient</Dependency>
+              <Dependency type="Internal">AnalysisRepository</Dependency>
+              <Dependency type="Internal">TranscriptionRepository</Dependency>
+            </Dependencies>
+            <Features>
+              <Feature name="CustomAnalysisTemplates">
+                <Description>User-defined templates for specialized analysis types</Description>
+                <Status>Planned</Status>
+              </Feature>
+              <Feature name="MultimodelAnalysis">
+                <Description>Combining results from multiple AI models for comprehensive analysis</Description>
+                <Status>In Development</Status>
+              </Feature>
+              <Feature name="ProgressiveAnalysis">
+                <Description>Iterative analysis with increasing depth based on content importance</Description>
+                <Status>Planned</Status>
+              </Feature>
+              <Feature name="EntityExtraction">
+                <Description>Identification of people, organizations, locations, and other entities</Description>
+                <Status>Implemented</Status>
+              </Feature>
+            </Features>
+            <Implementation>
+              <Language>TypeScript</Language>
+              <Files>
+                <File path="workspace/packages/core/src/analyze.ts">Main analysis engine implementation</File>
+                <File path="workspace/packages/core/src/analyzers/summary.ts">Summary generation module</File>
+                <File path="workspace/packages/core/src/analyzers/tagging.ts">Automatic tagging module</File>
+                <File path="workspace/packages/core/src/analyzers/sentiment.ts">Sentiment analysis module</File>
+              </Files>
+              <Patterns>
+                <Pattern>Chain of Responsibility for analysis pipeline</Pattern>
+                <Pattern>Decorator Pattern for enhancing analysis results</Pattern>
+                <Pattern>Template Method for analysis workflows</Pattern>
+              </Patterns>
+            </Implementation>
+          </Component>
+          
+          <Component name="GroupManager" type="Service">
+            <Description>Manages content organization into logical groups and collections</Description>
+            <Responsibilities>
+              <Responsibility>Create and manage content groups</Responsibility>
+              <Responsibility>Associate transcriptions with groups</Responsibility>
+              <Responsibility>Handle group hierarchies and relationships</Responsibility>
+              <Responsibility>Manage group metadata and properties</Responsibility>
+            </Responsibilities>
+            <Dependencies>
+              <Dependency type="Internal">GroupRepository</Dependency>
+              <Dependency type="Internal">TranscriptionRepository</Dependency>
+            </Dependencies>
+            <Features>
+              <Feature name="AutoGrouping">
+                <Description>Automatic grouping suggestions based on content similarity</Description>
+                <Status>Planned</Status>
+              </Feature>
+              <Feature name="GroupHierarchies">
+                <Description>Support for nested groups and complex organizational structures</Description>
+                <Status>In Development</Status>
+              </Feature>
+              <Feature name="GroupSharing">
+                <Description>Sharing groups with team members with access control</Description>
+                <Status>Future</Status>
+              </Feature>
+            </Features>
+            <Implementation>
+              <Language>TypeScript</Language>
+              <Files>
+                <File path="workspace/packages/core/src/groups/manager.ts">Group management implementation</File>
+                <File path="workspace/packages/core/src/groups/hierarchy.ts">Group hierarchy handling</File>
+              </Files>
+              <Patterns>
+                <Pattern>Composite Pattern for group hierarchies</Pattern>
+                <Pattern>Observer Pattern for group changes</Pattern>
+              </Patterns>
+            </Implementation>
+          </Component>
+          
+          <Component name="TagManager" type="Service">
+            <Description>Manages content tagging and categorization system</Description>
+            <Responsibilities>
+              <Responsibility>Create and manage tags</Responsibility>
+              <Responsibility>Associate tags with transcriptions and analyses</Responsibility>
+              <Responsibility>Handle tag taxonomies and relationships</Responsibility>
+              <Responsibility>Provide tag suggestions based on content</Responsibility>
+            </Responsibilities>
+            <Dependencies>
+              <Dependency type="Internal">TagRepository</Dependency>
+              <Dependency type="Internal">AnalysisEngine</Dependency>
+            </Dependencies>
+            <Features>
+              <Feature name="AutoTagging">
+                <Description>Automatic tag suggestions based on content analysis</Description>
+                <Status>Implemented</Status>
+              </Feature>
+              <Feature name="TagHierarchies">
+                <Description>Support for tag taxonomies and parent-child relationships</Description>
+                <Status>Planned</Status>
+              </Feature>
+              <Feature name="TagFiltering">
+                <Description>Advanced filtering and search by tags and combinations</Description>
+                <Status>Implemented</Status>
+              </Feature>
+            </Features>
+            <Implementation>
+              <Language>TypeScript</Language>
+              <Files>
+                <File path="workspace/packages/core/src/tags/manager.ts">Tag management implementation</File>
+                <File path="workspace/packages/core/src/tags/suggestions.ts">Tag suggestion engine</File>
+              </Files>
+              <Patterns>
+                <Pattern>Strategy Pattern for tag suggestion algorithms</Pattern>
+                <Pattern>Flyweight Pattern for tag instances</Pattern>
+              </Patterns>
+            </Implementation>
+          </Component>
+          
+          <Component name="EntityManager" type="Domain">
+            <Description>Domain entities and business rules</Description>
+            <Entities>
+              <Entity name="AudioFile">
+                <Properties>
+                  <Property name="id" type="string" required="true" />
+                  <Property name="path" type="string" required="true" />
+                  <Property name="filename" type="string" required="true" />
+                  <Property name="duration" type="number" required="false" />
+                  <Property name="format" type="string" required="true" />
+                  <Property name="size" type="number" required="true" />
+                  <Property name="metadata" type="object" required="false" />
+                  <Property name="status" type="enum" values="new,processing,ready,error" required="true" />
+                  <Property name="createdAt" type="Date" required="true" />
+                  <Property name="updatedAt" type="Date" required="true" />
+                </Properties>
+                <Relationships>
+                  <Relationship type="oneToMany" target="Transcription" />
+                </Relationships>
+                <Validations>
+                  <Validation property="format" rule="must be one of: mp3, m4a, wav, flac, ogg" />
+                  <Validation property="size" rule="must be less than 500MB" />
+                </Validations>
+              </Entity>
+              
+              <Entity name="Transcription">
+                <Properties>
+                  <Property name="id" type="string" required="true" />
+                  <Property name="audioFileId" type="string" required="true" />
+                  <Property name="text" type="string" required="true" />
+                  <Property name="language" type="string" required="true" />
+                  <Property name="confidence" type="number" required="false" />
+                  <Property name="provider" type="string" required="true" />
+                  <Property name="segments" type="array" required="false" />
+                  <Property name="status" type="enum" values="draft,final,reviewed,error" required="true" />
+                  <Property name="createdAt" type="Date" required="true" />
+                  <Property name="updatedAt" type="Date" required="true" />
+                </Properties>
+                <Relationships>
+                  <Relationship type="manyToOne" target="AudioFile" />
+                  <Relationship type="oneToMany" target="Analysis" />
+                  <Relationship type="manyToMany" target="Tag" />
+                  <Relationship type="manyToMany" target="Group" />
+                </Relationships>
+                <Validations>
+                  <Validation property="language" rule="must be valid ISO language code" />
+                  <Validation property="confidence" rule="must be between 0 and 1" />
+                </Validations>
+              </Entity>
+              
+              <Entity name="Analysis">
+                <Properties>
+                  <Property name="id" type="string" required="true" />
+                  <Property name="transcriptionId" type="string" required="true" />
+                  <Property name="type" type="enum" values="summary,sentiment,topics,action-items" required="true" />
+                  <Property name="content" type="object" required="true" />
+                  <Property name="confidence" type="number" required="false" />
+                  <Property name="model" type="string" required="true" />
+                  <Property name="createdAt" type="Date" required="true" />
+                </Properties>
+                <Relationships>
+                  <Relationship type="manyToOne" target="Transcription" />
+                  <Relationship type="manyToMany" target="Tag" />
+                </Relationships>
+              </Entity>
+              
+              <Entity name="Group">
+                <Properties>
+                  <Property name="id" type="string" required="true" />
+                  <Property name="name" type="string" required="true" />
+                  <Property name="description" type="string" required="false" />
+                  <Property name="parentId" type="string" required="false" />
+                  <Property name="metadata" type="object" required="false" />
+                  <Property name="createdAt" type="Date" required="true" />
+                  <Property name="updatedAt" type="Date" required="true" />
+                </Properties>
+                <Relationships>
+                  <Relationship type="manyToMany" target="Transcription" />
+                  <Relationship type="oneToMany" target="Group" as="children" />
+                  <Relationship type="manyToOne" target="Group" as="parent" />
+                </Relationships>
+                <Validations>
+                  <Validation property="name" rule="must be unique" />
+                </Validations>
+              </Entity>
+              
+              <Entity name="Tag">
+                <Properties>
+                  <Property name="id" type="string" required="true" />
+                  <Property name="name" type="string" required="true" />
+                  <Property name="color" type="string" required="false" />
+                  <Property name="parentId" type="string" required="false" />
+                  <Property name="metadata" type="object" required="false" />
+                  <Property name="createdAt" type="Date" required="true" />
+                </Properties>
+                <Relationships>
+                  <Relationship type="manyToMany" target="Transcription" />
+                  <Relationship type="manyToMany" target="Analysis" />
+                  <Relationship type="oneToMany" target="Tag" as="children" />
+                  <Relationship type="manyToOne" target="Tag" as="parent" />
+                </Relationships>
+                <Validations>
+                  <Validation property="name" rule="must be unique" />
+                  <Validation property="color" rule="must be valid hex color code" />
+                </Validations>
+              </Entity>
+              
+              <Entity name="User">
+                <Properties>
+                  <Property name="id" type="string" required="true" />
+                  <Property name="username" type="string" required="true" />
+                  <Property name="email" type="string" required="true" />
+                  <Property name="passwordHash" type="string" required="true" />
+                  <Property name="role" type="enum" values="admin,user,guest" required="true" />
+                  <Property name="preferences" type="object" required="false" />
+                  <Property name="createdAt" type="Date" required="true" />
+                  <Property name="lastLoginAt" type="Date" required="false" />
+                </Properties>
+                <Relationships>
+                  <Relationship type="oneToMany" target="AudioFile" />
+                  <Relationship type="oneToMany" target="Group" />
+                </Relationships>
+                <Validations>
+                  <Validation property="email" rule="must be valid email format" />
+                  <Validation property="username" rule="must be unique" />
+                </Validations>
+              </Entity>
+            </Entities>
+          </Component>
+        </Components>
+      </Layer>
+      
+      <!-- Infrastructure Layer -->
+      <Layer name="Infrastructure" order="2">
+        <Description>Technical capabilities including data persistence, external services, and cross-cutting concerns</Description>
+        <Components>
+          <Component name="DatabaseManager" type="Persistence">
+            <Description>Handles database operations using Prisma ORM</Description>
+            <Implementations>
+              <Implementation name="PrismaORM">
+                <Description>ORM implementation using Prisma for type-safe database access</Description>
+                <Features>
+                  <Feature>Automatic migrations from schema changes</Feature>
+                  <Feature>Type-safe database queries</Feature>
+                  <Feature>Connection pooling and optimization</Feature>
+                  <Feature>Support for SQLite (dev) and PostgreSQL (prod)</Feature>
+                </Features>
+                <Schema>
+                  <SchemaFile path="prisma/schema.prisma" />
+                  <Migrations path="prisma/migrations" />
+                </Schema>
+              </Implementation>
+            </Implementations>
+            <Operations>
+              <Operation name="initialize">Initialize database connection and migrate schema</Operation>
+              <Operation name="getConnection">Get database connection from pool</Operation>
+              <Operation name="runMigrations">Execute pending migrations</Operation>
+              <Operation name="backupDatabase">Create database backup</Operation>
+            </Operations>
+          </Component>
+          
+          <Component name="RepositoryManager" type="Repository">
+            <Description>Repository implementation for data access</Description>
+            <Repositories>
+              <Repository name="AudioFileRepository">
+                <Operations>
+                  <Operation name="findAll" />
+                  <Operation name="findById" />
+                  <Operation name="create" />
+                  <Operation name="update" />
+                  <Operation name="delete" />
+                  <Operation name="findByStatus" />
+                </Operations>
+              </Repository>
+              <Repository name="TranscriptionRepository">
+                <Operations>
+                  <Operation name="findAll" />
+                  <Operation name="findById" />
+                  <Operation name="findByAudioFileId" />
+                  <Operation name="create" />
+                  <Operation name="update" />
+                  <Operation name="delete" />
+                  <Operation name="findByTags" />
+                  <Operation name="findByGroups" />
+                </Operations>
+              </Repository>
+              <Repository name="AnalysisRepository">
+                <Operations>
+                  <Operation name="findAll" />
+                  <Operation name="findById" />
+                  <Operation name="findByTranscriptionId" />
+                  <Operation name="create" />
+                  <Operation name="delete" />
+                  <Operation name="findByType" />
+                </Operations>
+              </Repository>
+              <Repository name="GroupRepository">
+                <Operations>
+                  <Operation name="findAll" />
+                  <Operation name="findById" />
+                  <Operation name="create" />
+                  <Operation name="update" />
+                  <Operation name="delete" />
+                  <Operation name="findByParentId" />
+                  <Operation name="getHierarchy" />
+                </Operations>
+              </Repository>
+              <Repository name="TagRepository">
+                <Operations>
+                  <Operation name="findAll" />
+                  <Operation name="findById" />
+                  <Operation name="create" />
+                  <Operation name="update" />
+                  <Operation name="delete" />
+                  <Operation name="findByParentId" />
+                  <Operation name="findByTranscription" />
+                </Operations>
+              </Repository>
+              <Repository name="UserRepository">
+                <Operations>
+                  <Operation name="findAll" />
+                  <Operation name="findById" />
+                  <Operation name="findByUsername" />
+                  <Operation name="findByEmail" />
+                  <Operation name="create" />
+                  <Operation name="update" />
+                  <Operation name="delete" />
+                </Operations>
+              </Repository>
+            </Repositories>
+          </Component>
+          
+          <Component name="ExternalAPIClients" type="Service">
+            <Description>Clients for external API services</Description>
+            <Clients>
+              <Client name="ElevenLabsClient">
+                <Endpoint>https://api.elevenlabs.io/v1</Endpoint>
+                <Operations>
+                  <Operation name="transcribeAudio" />
+                  <Operation name="getSpeakerIdentification" />
+                  <Operation name="getAccountStatus" />
+                </Operations>
+                <RateLimiting>
+                  <Limit>100 requests per minute</Limit>
+                  <Strategy>Exponential backoff with jitter</Strategy>
+                </RateLimiting>
+                <Configuration>
+                  <Setting name="apiKey" source="environment" variable="ELEVENLABS_API_KEY" />
+                  <Setting name="timeout" value="60000" />
+                  <Setting name="retries" value="3" />
+                </Configuration>
+              </Client>
+              <Client name="OpenRouterClient">
+                <Endpoint>https://openrouter.ai/api</Endpoint>
+                <Operations>
+                  <Operation name="generateCompletion" />
+                  <Operation name="analyzeText" />
+                  <Operation name="listModels" />
+                </Operations>
+                <RateLimiting>
+                  <Limit>Based on account tier</Limit>
+                  <Strategy>Token bucket with queue</Strategy>
+                </RateLimiting>
+                <Configuration>
+                  <Setting name="apiKey" source="environment" variable="OPENROUTER_API_KEY" />
+                  <Setting name="defaultModel" value="anthropic/claude-3-opus-20240229" />
+                  <Setting name="timeout" value="120000" />
+                </Configuration>
+              </Client>
+              <Client name="ClaudeAPIClient">
+                <Endpoint>https://api.anthropic.com/v1</Endpoint>
+                <Operations>
+                  <Operation name="createMessage" />
+                  <Operation name="listModels" />
+                </Operations>
+                <RateLimiting>
+                  <Limit>Based on account tier</Limit>
+                  <Strategy>Token bucket with queue</Strategy>
+                </RateLimiting>
+                <Configuration>
+                  <Setting name="apiKey" source="environment" variable="ANTHROPIC_API_KEY" />
+                  <Setting name="defaultModel" value="claude-3-opus-20240229" />
+                  <Setting name="timeout" value="120000" />
+                </Configuration>
+              </Client>
+              <Client name="WhisperAPIClient">
+                <Endpoint>https://api.openai.com/v1</Endpoint>
+                <Operations>
+                  <Operation name="transcribeAudio" />
+                  <Operation name="translateAudio" />
+                </Operations>
+                <RateLimiting>
+                  <Limit>Based on account tier</Limit>
+                  <Strategy>Exponential backoff</Strategy>
+                </RateLimiting>
+                <Configuration>
+                  <Setting name="apiKey" source="environment" variable="OPENAI_API_KEY" />
+                  <Setting name="timeout" value="180000" />
+                  <Setting name="model" value="whisper-1" />
+                </Configuration>
+              </Client>
+            </Clients>
+          </Component>
+          
+          <Component name="MCPServer" type="Service">
+            <Description>Model Context Protocol server for AI capabilities</Description>
+            <Features>
+              <Feature>
+                <Name>ResourceProviders</Name>
+                <Description>Provides access to transcription and analysis data</Description>
+                <Resources>
+                  <Resource uri="transcription://{id}">Access specific transcription</Resource>
+                  <Resource uri="analysis://{id}">Access specific analysis</Resource>
+                  <Resource uri="group://{id}/transcriptions">Access transcriptions in group</Resource>
+                </Resources>
+              </Feature>
+              <Feature>
+                <Name>ToolProviders</Name>
+                <Description>Provides tools for performing actions</Description>
+                <Tools>
+                  <Tool name="analyze-transcription">Run analysis on transcription</Tool>
+                  <Tool name="extract-topics">Extract key topics from text</Tool>
+                  <Tool name="summarize-content">Generate content summary</Tool>
+                  <Tool name="tag-content">Automatically tag content</Tool>
+                </Tools>
+              </Feature>
+              <Feature>
+                <Name>PromptProviders</Name>
+                <Description>Provides prompt templates for consistent AI interactions</Description>
+                <Prompts>
+                  <Prompt name="detailed-analysis">Template for comprehensive content analysis</Prompt>
+                  <Prompt name="summary-generation">Template for executive summary creation</Prompt>
+                  <Prompt name="action-items-extraction">Template for action item extraction</Prompt>
+                </Prompts>
+              </Feature>
+            </Features>
+            <Endpoints>
+              <Endpoint path="/sse" method="GET" transport="SSE" />
+              <Endpoint path="/message" method="POST" />
+            </Endpoints>
+            <Implementation>
+              <Language>TypeScript</Language>
+              <Files>
+                <File path="workspace/packages/mcp/src/cli.ts">Command line interface for MCP server</File>
+                <File path="workspace/packages/mcp/src/index.ts">Main MCP server implementation</File>
+                <File path="workspace/packages/mcp/src/resources/transcriptions.ts">Transcription resource provider</File>
+                <File path="workspace/packages/mcp/src/tools/analysis.ts">Analysis tools implementation</File>
+              </Files>
+            </Implementation>
+          </Component>
+          
+          <Component name="AudioProcessor" type="Service">
+            <Description>Processes and optimizes audio files for transcription</Description>
+            <Features>
+              <Feature>
+                <Name>AudioNormalization</Name>
+                <Description>Normalizes audio levels for better transcription quality</Description>
+              </Feature>
+              <Feature>
+                <Name>NoiseReduction</Name>
+                <Description>Reduces background noise to improve clarity</Description>
+              </Feature>
+              <Feature>
+                <Name>FormatConversion</Name>
+                <Description>Converts audio to optimal format for transcription service</Description>
+              </Feature>
+              <Feature>
+                <Name>SpeakerDiarization</Name>
+                <Description>Detects and separates different speakers in audio</Description>
+              </Feature>
+            </Features>
+            <Dependencies>
+              <Dependency>ffmpeg</Dependency>
+              <Dependency>sox</Dependency>
+            </Dependencies>
+          </Component>
+          
+          <Component name="LoggingSystem" type="Infrastructure">
+            <Description>Centralized logging with Winston</Description>
+            <Features>
+              <Feature>Structured logging with JSON format</Feature>
+              <Feature>Log levels and filtering</Feature>
+              <Feature>Rotating file logs with archiving</Feature>
+              <Feature>Log collection and aggregation</Feature>
+              <Feature>Context preservation across async operations</Feature>
+              <Feature>Sensitive data redaction</Feature>
+            </Features>
+            <LogTypes>
+              <LogType name="Application" path="logs/app.log" />
+              <LogType name="API" path="logs/api.log" />
+              <LogType name="Database" path="logs/db.log" />
+              <LogType name="Transcription" path="logs/transcribe.log" />
+              <LogType name="Error" path="logs/error.log" level="error" />
+            </LogTypes>
+          </Component>
+          
+          <Component name="AuthenticationSystem" type="Security">
+            <Description>User authentication and authorization system</Description>
+            <Features>
+              <Feature>JWT-based authentication</Feature>
+              <Feature>Role-based access control</Feature>
+              <Feature>Password hashing with bcrypt</Feature>
+              <Feature>Token refresh mechanism</Feature>
+              <Feature>OAuth2 integration (planned)</Feature>
+            </Features>
+            <Roles>
+              <Role name="Admin" permissions="full-access" />
+              <Role name="User" permissions="user-resources" />
+              <Role name="Guest" permissions="read-only" />
+              <Role name="API" permissions="api-access" />
+            </Roles>
+          </Component>
+        </Components>
+      </Layer>
+      
+      <!-- Interface Layer -->
+      <Layer name="Interface" order="3">
+        <Description>User interfaces and API endpoints for external interaction</Description>
+        <Components>
+          <Component name="CLIInterface" type="Interface">
+            <Description>Command line interface for transcription operations</Description>
+            <Commands>
+              <Command name="transcribe">
+                <Description>Transcribe an audio file</Description>
+                <Parameters>
+                  <Parameter name="file" type="string" required="true" description="Path to audio file" />
+                  <Parameter name="language" type="string" required="false" description="Language code (default: auto-detect)" />
+                  <Parameter name="provider" type="string" required="false" description="Transcription provider to use" />
+                  <Parameter name="output" type="string" required="false" description="Output file path" />
+                </Parameters>
+                <Examples>
+                  <Example>transcribe ./recording.mp3 --language en-US</Example>
+                  <Example>transcribe ./meeting.m4a --provider elevenlabs --output meeting.txt</Example>
+                </Examples>
+              </Command>
+              <Command name="analyze">
+                <Description>Analyze a transcription</Description>
+                <Parameters>
+                  <Parameter name="transcriptionId" type="string" required="true" description="ID of transcription to analyze" />
+                  <Parameter name="type" type="string" required="false" description="Analysis type (summary, sentiment, topics, action-items)" />
+                  <Parameter name="model" type="string" required="false" description="AI model to use" />
+                </Parameters>
+                <Examples>
+                  <Example>analyze abc123 --type summary</Example>
+                  <Example>analyze xyz789 --type action-items --model claude-3-opus</Example>
+                </Examples>
+              </Command>
+              <Command name="list">
+                <Description>List entities (transcriptions, analyses, audio files)</Description>
+                <Parameters>
+                  <Parameter name="entity" type="string" required="true" description="Entity type to list" />
+                  <Parameter name="filter" type="string" required="false" description="Filter expression" />
+                  <Parameter name="limit" type="number" required="false" description="Maximum number of results" />
+                </Parameters>
+                <Examples>
+                  <Example>list transcriptions --filter "status=ready"</Example>
+                  <Example>list audio-files --limit 20</Example>
+                </Examples>
+              </Command>
+              <Command name="groups">
+                <Description>Manage content groups</Description>
+                <Subcommands>
+                  <Subcommand name="create" description="Create a new group" />
+                  <Subcommand name="list" description="List all groups" />
+                  <Subcommand name="add" description="Add content to group" />
+                </Subcommands>
+              </Command>
+              <Command name="tags">
+                <Description>Manage content tags</Description>
+                <Subcommands>
+                  <Subcommand name="create" description="Create a new tag" />
+                  <Subcommand name="list" description="List all tags" />
+                  <Subcommand name="add" description="Add tag to content" />
+                </Subcommands>
+              </Command>
+            </Commands>
+            <Implementation>
+              <Language>TypeScript</Language>
+              <Files>
+                <File path="workspace/packages/cli/src/index.ts">Main CLI entry point</File>
+                <File path="workspace/packages/cli/src/commands/transcribe.ts">Transcribe command implementation</File>
+                <File path="workspace/packages/cli/src/commands/analyze.ts">Analyze command implementation</File>
+              </Files>
+              <Dependencies>
+                <Dependency>commander.js for command parsing</Dependency>
+                <Dependency>inquirer.js for interactive prompts</Dependency>
+                <Dependency>chalk for terminal styling</Dependency>
+              </Dependencies>
+            </Implementation>
+          </Component>
+          
+          <Component name="WebAPI" type="Interface">
+            <Description>RESTful API for web client consumption</Description>
+            <ApiSpecification>
+              <Format>OpenAPI 3.0</Format>
+              <BasePath>/api</BasePath>
+              <Authentication>
+                <Type>JWT Bearer Token</Type>
+                <Endpoints exclude="/api/auth/login,/api/auth/register" />
+              </Authentication>
+            </ApiSpecification>
+            <RouteGroups>
+              <RouteGroup path="/api/auth">
+                <Description>Authentication endpoints</Description>
+                <Route path="/login" method="POST" handler="AuthController.login">
+                  <Description>Authenticate user and get access token</Description>
+                  <Request contentType="application/json">
+                    <Field name="username" type="string" required="true" />
+                    <Field name="password" type="string" required="true" />
+                  </Request>
+                  <Response status="200">
+                    <Field name="token" type="string" />
+                    <Field name="refreshToken" type="string" />
+                    <Field name="user" type="object" />
+                  </Response>
+                </Route>
+                <Route path="/register" method="POST" handler="AuthController.register">
+                  <Description>Register new user</Description>
+                </Route>
+                <Route path="/refresh" method="POST" handler="AuthController.refreshToken">
+                  <Description>Refresh access token</Description>
+                </Route>
+                <Route path="/logout" method="POST" handler="AuthController.logout">
+                  <Description>Invalidate current token</Description>
+                </Route>
+              </RouteGroup>
+              <RouteGroup path="/api/audio-files">
+                <Description>Audio file management</Description>
+                <Route path="/" method="GET" handler="AudioFileController.getAll">
+                  <Description>Get all audio files</Description>
+                  <Parameters>
+                    <Parameter name="status" in="query" type="string" required="false" />
+                    <Parameter name="limit" in="query" type="number" required="false" />
+                    <Parameter name="offset" in="query" type="number" required="false" />
+                  </Parameters>
+                </Route>
+                <Route path="/:id" method="GET" handler="AudioFileController.getById">
+                  <Description>Get audio file by ID</Description>
+                </Route>
+                <Route path="/" method="POST" handler="AudioFileController.create">
+                  <Description>Upload new audio file</Description>
+                  <ContentType>multipart/form-data</ContentType>
+                </Route>
+                <Route path="/:id" method="DELETE" handler="AudioFileController.delete">
+                  <Description>Delete audio file</Description>
+                </Route>
+              </RouteGroup>
+              <RouteGroup path="/api/transcriptions">
+                <Description>Transcription management</Description>
+                <Route path="/" method="GET" handler="TranscriptionController.getAll">
+                  <Description>Get all transcriptions</Description>
+                </Route>
+                <Route path="/:id" method="GET" handler="TranscriptionController.getById">
+                  <Description>Get transcription by ID</Description>
+                </Route>
+                <Route path="/" method="POST" handler="TranscriptionController.create">
+                  <Description>Create new transcription</Description>
+                </Route>
+                <Route path="/:id" method="PUT" handler="TranscriptionController.update">
+                  <Description>Update transcription</Description>
+                </Route>
+                <Route path="/:id/tags" method="POST" handler="TranscriptionController.addTag">
+                  <Description>Add tag to transcription</Description>
+                </Route>
+              </RouteGroup>
+              <RouteGroup path="/api/analyses">
+                <Description>Analysis management</Description>
+                <Route path="/" method="GET" handler="AnalysisController.getAll">
+                  <Description>Get all analyses</Description>
+                </Route>
+                <Route path="/:id" method="GET" handler="AnalysisController.getById">
+                  <Description>Get analysis by ID</Description>
+                </Route>
+                <Route path="/" method="POST" handler="AnalysisController.create">
+                  <Description>Create new analysis</Description>
+                </Route>
+              </RouteGroup>
+              <RouteGroup path="/api/groups">
+                <Description>Group management</Description>
+                <Route path="/" method="GET" handler="GroupController.getAll" />
+                <Route path="/:id" method="GET" handler="GroupController.getById" />
+                <Route path="/" method="POST" handler="GroupController.create" />
+                <Route path="/:id" method="PUT" handler="GroupController.update" />
+                <Route path="/:id" method="DELETE" handler="GroupController.delete" />
+                <Route path="/:id/transcriptions" method="GET" handler="GroupController.getTranscriptions" />
+                <Route path="/:id/transcriptions" method="POST" handler="GroupController.addTranscription" />
+              </RouteGroup>
+              <RouteGroup path="/api/tags">
+                <Description>Tag management</Description>
+                <Route path="/" method="GET" handler="TagController.getAll" />
+                <Route path="/:id" method="GET" handler="TagController.getById" />
+                <Route path="/" method="POST" handler="TagController.create" />
+                <Route path="/:id" method="PUT" handler="TagController.update" />
+                <Route path="/:id" method="DELETE" handler="TagController.delete" />
+                <Route path="/:id/transcriptions" method="GET" handler="TagController.getTranscriptions" />
+              </RouteGroup>
+            </RouteGroups>
+            <Implementation>
+              <Language>TypeScript</Language>
+              <Framework>Express.js</Framework>
+              <Files>
+                <File path="workspace/interface/web/server/server.ts">Main server implementation</File>
+                <File path="workspace/interface/web/server/routes/transcriptionRoutes.ts">Transcription routes</File>
+                <File path="workspace/interface/web/server/controllers/TranscriptionController.ts">Transcription controller</File>
+              </Files>
+              <Middleware>
+                <Middleware name="errorHandler">Centralized error handling</Middleware>
+                <Middleware name="requestLogger">Request logging with correlation IDs</Middleware>
+                <Middleware name="authMiddleware">JWT authentication and validation</Middleware>
+                <Middleware name="rateLimiter">API rate limiting protection</Middleware>
+              </Middleware>
+            </Implementation>
+          </Component>
+          
+          <Component name="WebClient" type="Interface">
+            <Description>React-based web client interface</Description>
+            <Pages>
+              <Page name="Dashboard" route="/">
+                <Description>Overview dashboard with recent items and statistics</Description>
+                <Components>
+                  <UIComponent name="RecentTranscriptions" />
+                  <UIComponent name="ActivityStats" />
+                  <UIComponent name="QuickActions" />
+                </Components>
+              </Page>
+              <Page name="AudioFileList" route="/audio-files">
+                <Description>List and manage audio files</Description>
+                <Components>
+                  <UIComponent name="AudioFileTable" />
+                  <UIComponent name="UploadAudioForm" />
+                  <UIComponent name="AudioFileFilters" />
+                </Components>
+              </Page>
+              <Page name="TranscriptionDetail" route="/transcriptions/:id">
+                <Description>View and edit transcription details</Description>
+                <Components>
+                  <UIComponent name="TranscriptionEditor" />
+                  <UIComponent name="AudioPlayer" />
+                  <UIComponent name="TranscriptionMetadata" />
+                  <UIComponent name="TranscriptionActions" />
+                </Components>
+              </Page>
+              <Page name="AnalysisList" route="/analyses">
+                <Description>Browse and manage analyses</Description>
+                <Components>
+                  <UIComponent name="AnalysisTable" />
+                  <UIComponent name="AnalysisFilters" />
+                </Components>
+              </Page>
+              <Page name="GroupManagement" route="/groups">
+                <Description>Manage content groups</Description>
+                <Components>
+                  <UIComponent name="GroupHierarchy" />
+                  <UIComponent name="GroupEditor" />
+                  <UIComponent name="GroupContent" />
+                </Components>
+              </Page>
+              <Page name="TagManagement" route="/tags">
+                <Description>Manage content tags</Description>
+                <Components>
+                  <UIComponent name="TagEditor" />
+                  <UIComponent name="TaggedContentList" />
+                </Components>
+              </Page>
+              <Page name="Settings" route="/settings">
+                <Description>Configure application settings</Description>
+                <Components>
+                  <UIComponent name="UserSettings" />
+                  <UIComponent name="APISettings" />
+                  <UIComponent name="TranscriptionSettings" />
+                </Components>
+              </Page>
+              <Page name="Login" route="/login">
+                <Description>User authentication</Description>
+                <Components>
+                  <UIComponent name="LoginForm" />
+                  <UIComponent name="RegistrationForm" />
+                </Components>
+              </Page>
+            </Pages>
+            <GlobalComponents>
+              <UIComponent name="NavBar">
+                <Description>Main navigation bar</Description>
+              </UIComponent>
+              <UIComponent name="Sidebar">
+                <Description>Context-sensitive sidebar navigation</Description>
+              </UIComponent>
+              <UIComponent name="NotificationCenter">
+                <Description>System notifications and alerts</Description>
+              </UIComponent>
+              <UIComponent name="SearchBar">
+                <Description>Global search functionality</Description>
+              </UIComponent>
+              <UIComponent name="ErrorBoundary">
+                <Description>React error boundary for component error handling</Description>
+              </UIComponent>
+            </GlobalComponents>
+            <Implementation>
+              <Language>TypeScript</Language>
+              <Framework>React</Framework>
+              <UILibrary>shadcn/ui</UILibrary>
+              <StateManagement>React Context API</StateManagement>
+              <Files>
+                <File path="workspace/packages/web/client/src/App.tsx">Main application component</File>
+                <File path="workspace/packages/web/client/src/components/TranscriptionDetail.tsx">Transcription detail component</File>
+                <File path="workspace/packages/web/client/src/contexts/AuthContext.tsx">Authentication context</File>
+              </Files>
+            </Implementation>
+          </Component>
+        </Components>
+      </Layer>
+    </Layers>
+    
+    <!-- Cross-Cutting Concerns -->
+    <CrossCuttingConcerns>
+      <Concern name="Error Handling">
+        <Description>Hierarchical error system with consistent formatting and handling</Description>
+        <Implementation>
+          <Language>TypeScript</Language>
+          <Pattern>Error class hierarchy with standardized properties</Pattern>
+          <ErrorTracking>Log aggregation with context preservation</ErrorTracking>
+        </Implementation>
+        <ErrorTypes>
+          <ErrorType name="AppError" base="true">
+            <Properties>
+              <Property name="message" type="string" />
+              <Property name="code" type="string" />
+              <Property name="context" type="object" />
+              <Property name="originalError" type="Error" />
+              <Property name="httpStatus" type="number" />
+            </Properties>
+          </ErrorType>
+          <ErrorType name="ValidationError" extends="AppError">
+            <Properties>
+              <Property name="validationErrors" type="object" />
+            </Properties>
+          </ErrorType>
+          <ErrorType name="DatabaseError" extends="AppError">
+            <Subtypes>
+              <ErrorType name="ConnectionError" />
+              <ErrorType name="QueryError" />
+              <ErrorType name="TransactionError" />
+              <ErrorType name="ForeignKeyError" />
+              <ErrorType name="UniqueConstraintError" />
+            </Subtypes>
+          </ErrorType>
+          <ErrorType name="APIError" extends="AppError">
+            <Properties>
+              <Property name="retryable" type="boolean" />
+              <Property name="retryAfterMs" type="number" />
+            </Properties>
+            <Subtypes>
+              <ErrorType name="RateLimitError" />
+              <ErrorType name="AuthenticationError" />
+              <ErrorType name="ServerError" />
+            </Subtypes>
+          </ErrorType>
+          <ErrorType name="TranscriptionError" extends="AppError">
+            <Subtypes>
+              <ErrorType name="TranscriptionAPIError" />
+              <ErrorType name="AudioProcessingError" />
+            </Subtypes>
+          </ErrorType>
+        </ErrorTypes>
+      </Concern>
+      
+      <Concern name="Authentication and Authorization">
+        <Description>User authentication and authorization system</Description>
+        <Implementation>
+          <AuthMethod>JWT (JSON Web Tokens)</AuthMethod>
+          <TokenStorage>HttpOnly cookies (web) / Secure storage (mobile)</TokenStorage>
+          <RefreshStrategy>Sliding expiration with refresh tokens</RefreshStrategy>
+        </Implementation>
+        <SecurityFeatures>
+          <Feature>Password hashing with bcrypt</Feature>
+          <Feature>CSRF protection</Feature>
+          <Feature>Rate limiting for auth endpoints</Feature>
+          <Feature>JWT claims validation</Feature>
+          <Feature>Role-based access control</Feature>
+        </SecurityFeatures>
+      </Concern>
+      
+      <Concern name="Configuration Management">
+        <Description>Application configuration system</Description>
+        <Implementation>
+          <EnvironmentVariables>
+            <Variable name="NODE_ENV" description="Environment (development, test, production)" />
+            <Variable name="PORT" description="Server port" />
+            <Variable name="DATABASE_URL" description="Database connection string" />
+            <Variable name="JWT_SECRET" description="Secret for JWT signing" />
+            <Variable name="ELEVENLABS_API_KEY" description="ElevenLabs API key" />
+            <Variable name="OPENROUTER_API_KEY" description="OpenRouter API key" />
+          </EnvironmentVariables>
+          <ConfigFiles>
+            <File path=".env" description="Environment variables" />
+            <File path="config.js" description="Configuration module" />
+          </ConfigFiles>
+        </Implementation>
+      </Concern>
+      
+      <Concern name="Logging and Monitoring">
+        <Description>Comprehensive logging and monitoring system</Description>
+        <Implementation>
+          <Logger>Winston</Logger>
+          <LogFormats>
+            <Format name="development" type="colored text" />
+            <Format name="production" type="JSON" />
+          </LogFormats>
+          <LogLevels>
+            <Level name="error" severity="1" />
+            <Level name="warn" severity="2" />
+            <Level name="info" severity="3" />
+            <Level name="debug" severity="4" />
+            <Level name="verbose" severity="5" />
+          </LogLevels>
+        </Implementation>
+        <Features>
+          <Feature>Correlation IDs across service boundaries</Feature>
+          <Feature>Context preservation in asynchronous code</Feature>
+          <Feature>Sensitive data redaction</Feature>
+          <Feature>Log rotation and archiving</Feature>
+          <Feature>Structured JSON logging for machine processing</Feature>
+        </Features>
+      </Concern>
+      
+      <Concern name="Performance Optimization">
+        <Description>Performance optimization strategies</Description>
+        <Strategies>
+          <Strategy name="Database">
+            <Techniques>
+              <Technique>Connection pooling</Technique>
+              <Technique>Query optimization</Technique>
+              <Technique>Indexing strategy</Technique>
+              <Technique>Transaction management</Technique>
+            </Techniques>
+          </Strategy>
+          <Strategy name="API">
+            <Techniques>
+              <Technique>Response caching</Technique>
+              <Technique>Pagination and filtering</Technique>
+              <Technique>Compression</Technique>
+              <Technique>Asynchronous processing for long operations</Technique>
+            </Techniques>
+          </Strategy>
+          <Strategy name="Frontend">
+            <Techniques>
+              <Technique>Bundle optimization</Technique>
+              <Technique>Code splitting</Technique>
+              <Technique>Lazy loading</Technique>
+              <Technique>Memoization</Technique>
+            </Techniques>
+          </Strategy>
+        </Strategies>
+      </Concern>
+    </CrossCuttingConcerns>
+    
+    <!-- Data Flows -->
+    <DataFlows>
+      <DataFlow name="TranscriptionProcess">
+        <Description>End-to-end flow for transcribing an audio file</Description>
+        <Steps>
+          <Step number="1" component="WebClient.UploadAudioForm">User uploads audio file</Step>
+          <Step number="2" component="WebAPI.AudioFileController">API receives file and validates format</Step>
+          <Step number="3" component="AudioProcessor">Audio is normalized and optimized</Step>
+          <Step number="4" component="TranscriptionEngine">Audio file is prepared for transcription</Step>
+          <Step number="5" component="ExternalAPIClients.ElevenLabsClient">API request to ElevenLabs is made</Step>
+          <Step number="6" component="TranscriptionEngine">Transcription result is received and processed</Step>
+          <Step number="7" component="RepositoryManager.TranscriptionRepository">Transcription is stored in database</Step>
+          <Step number="8" component="WebAPI.TranscriptionController">Success response returned to client</Step>
+          <Step number="9" component="WebClient.TranscriptionDetail">Transcription displayed to user</Step>
+        </Steps>
+      </DataFlow>
+      
+      <DataFlow name="AnalysisProcess">
+        <Description>Flow for analyzing a transcription</Description>
+        <Steps>
+          <Step number="1" component="WebClient.TranscriptionActions">User requests analysis of transcription</Step>
+          <Step number="2" component="WebAPI.AnalysisController">Request is received and validated</Step>
+          <Step number="3" component="AnalysisEngine">Transcription text is prepared for analysis</Step>
+          <Step number="4" component="ExternalAPIClients.OpenRouterClient">Analysis request sent to AI service</Step>
+          <Step number="5" component="AnalysisEngine">Analysis results processed and structured</Step>
+          <Step number="6" component="TagManager">Automatic tag suggestions generated</Step>
+          <Step number="7" component="RepositoryManager.AnalysisRepository">Analysis stored in database</Step>
+          <Step number="8" component="WebAPI.AnalysisController">Response sent to client</Step>
+          <Step number="9" component="WebClient.AnalysisViewer">Analysis displayed to user</Step>
+        </Steps>
+      </DataFlow>
+      
+      <DataFlow name="GroupOrganization">
+        <Description>Flow for organizing content into groups</Description>
+        <Steps>
+          <Step number="1" component="WebClient.GroupEditor">User creates or modifies group</Step>
+          <Step number="2" component="WebAPI.GroupController">Group changes are processed</Step>
+          <Step number="3" component="GroupManager">Group logic is applied</Step>
+          <Step number="4" component="RepositoryManager.GroupRepository">Group data is stored</Step>
+          <Step number="5" component="WebClient.GroupHierarchy">Updated group structure displayed</Step>
+        </Steps>
+      </DataFlow>
+    </DataFlows>
+  </Architecture>
+  
+  <!-- Deployment Architecture -->
+  <Deployment>
+    <Environments>
+      <Environment name="Development">
+        <Description>Local development environment</Description>
+        <Components>
+          <Component name="Backend">
+            <Technology>Node.js + Express</Technology>
+            <Runtime>Local development server</Runtime>
+            <Configuration>
+              <Setting key="PORT" value="4560" />
+              <Setting key="DATABASE_URL" value="sqlite:./dev.db" />
+            </Configuration>
+          </Component>
+          <Component name="Frontend">
+            <Technology>React</Technology>
+            <Runtime>Vite development server</Runtime>
+            <Configuration>
+              <Setting key="PORT" value="4500" />
+              <Setting key="PROXY_API" value="http://localhost:4560" />
+            </Configuration>
+          </Component>
+          <Component name="Database">
+            <Technology>SQLite</Technology>
+            <Location>Local file</Location>
+          </Component>
+        </Components>
+        <Tools>
+          <Tool name="nodemon">Automatic server restart on changes</Tool>
+          <Tool name="ts-node">TypeScript execution</Tool>
+          <Tool name="vite">Frontend development server</Tool>
+          <Tool name="jest">Testing framework</Tool>
+          <Tool name="playwright">E2E testing</Tool>
+        </Tools>
+      </Environment>
+      
+      <Environment name="Testing">
+        <Description>Continuous integration testing environment</Description>
+        <Components>
+          <Component name="Backend">
+            <Technology>Node.js + Express</Technology>
+            <Runtime>CI container</Runtime>
+          </Component>
+          <Component name="Frontend">
+            <Technology>React (headless testing)</Technology>
+            <Runtime>CI container</Runtime>
+          </Component>
+          <Component name="Database">
+            <Technology>SQLite (in-memory)</Technology>
+            <Location>In-memory database</Location>
+          </Component>
+        </Components>
+        <TestSuites>
+          <Suite name="Unit Tests">Tests for individual components</Suite>
+          <Suite name="Integration Tests">Tests for component interactions</Suite>
+          <Suite name="E2E Tests">End-to-end workflow tests</Suite>
+          <Suite name="API Tests">Tests for API endpoints</Suite>
+        </TestSuites>
+      </Environment>
+      
+      <Environment name="Staging">
+        <Description>Pre-production environment for final testing</Description>
+        <Components>
+          <Component name="Backend">
+            <Technology>Node.js + Express</Technology>
+            <Runtime>Docker container</Runtime>
+          </Component>
+          <Component name="Frontend">
+            <Technology>React (built)</Technology>
+            <Runtime>Nginx static server</Runtime>
+          </Component>
+          <Component name="Database">
+            <Technology>PostgreSQL</Technology>
+            <Runtime>Managed database service</Runtime>
+          </Component>
+        </Components>
+      </Environment>
+      
+      <Environment name="Production">
+        <Description>Production environment</Description>
+        <Components>
+          <Component name="Backend">
+            <Technology>Node.js + Express</Technology>
+            <Runtime>Docker container</Runtime>
+            <ScalingStrategy>Horizontal with load balancing</ScalingStrategy>
+            <Security>
+              <Feature>API rate limiting</Feature>
+              <Feature>HTTPS with TLS 1.3</Feature>
+              <Feature>Security headers</Feature>
+              <Feature>DDoS protection</Feature>
+            </Security>
+          </Component>
+          <Component name="Frontend">
+            <Technology>React (built)</Technology>
+            <Runtime>Nginx static server</Runtime>
+            <CDN>CloudFront or similar</CDN>
+          </Component>
+          <Component name="Database">
+            <Technology>PostgreSQL</Technology>
+            <Runtime>Managed database service</Runtime>
+            <Features>
+              <Feature>Automated backups</Feature>
+              <Feature>Point-in-time recovery</Feature>
+              <Feature>Read replicas</Feature>
+            </Features>
+          </Component>
+          <Component name="Cache">
+            <Technology>Redis</Technology>
+            <Usage>API response caching, session storage</Usage>
+          </Component>
+        </Components>
+        <Monitoring>
+          <Service name="Application Monitoring">
+            <Metrics>
+              <Metric>Response times</Metric>
+              <Metric>Error rates</Metric>
+              <Metric>Resource usage</Metric>
+            </Metrics>
+          </Service>
+          <Service name="Log Aggregation">
+            <Implementation>Centralized logging service</Implementation>
+          </Service>
+          <Service name="Alerting">
+            <Channels>
+              <Channel>Email</Channel>
+              <Channel>SMS</Channel>
+              <Channel>Slack</Channel>
+            </Channels>
+          </Service>
+        </Monitoring>
+      </Environment>
+    </Environments>
+    
+    <CI_CD>
+      <Pipeline name="Main">
+        <Stages>
+          <Stage name="Build">
+            <Steps>
+              <Step>Install dependencies</Step>
+              <Step>Lint code</Step>
+              <Step>Build application</Step>
+            </Steps>
+          </Stage>
+          <Stage name="Test">
+            <Steps>
+              <Step>Run unit tests</Step>
+              <Step>Run integration tests</Step>
+              <Step>Run E2E tests</Step>
+            </Steps>
+          </Stage>
+          <Stage name="Analyze">
+            <Steps>
+              <Step>Code quality analysis</Step>
+              <Step>Security scanning</Step>
+              <Step>Dependency audit</Step>
+            </Steps>
+          </Stage>
+          <Stage name="Deploy">
+            <Steps>
+              <Step>Create deployment artifacts</Step>
+              <Step>Deploy to appropriate environment</Step>
+              <Step>Run smoke tests</Step>
+            </Steps>
+          </Stage>
+        </Stages>
+      </Pipeline>
+    </CI_CD>
+  </Deployment>
+  
+  <Testing>
+    <TestTypes>
+      <TestType name="Unit Tests">
+        <Description>Tests for individual components and functions</Description>
+        <Framework>Jest</Framework>
+        <Patterns>
+          <Pattern>Arrange-Act-Assert</Pattern>
+          <Pattern>Mocking of dependencies</Pattern>
+        </Patterns>
+      </TestType>
+      <TestType name="Integration Tests">
+        <Description>Tests for component interactions</Description>
+        <Framework>Jest + Supertest</Framework>
+        <Focus>
+          <Area>Repository interactions with database</Area>
+          <Area>Service interactions with repositories</Area>
+          <Area>Controller interactions with services</Area>
+        </Focus>
+      </TestType>
+      <TestType name="API Tests">
+        <Description>Tests for API endpoints</Description>
+        <Framework>Supertest</Framework>
+        <Patterns>
+          <Pattern>Request-response validation</Pattern>
+          <Pattern>Authentication and authorization testing</Pattern>
+          <Pattern>Edge case handling</Pattern>
+        </Patterns>
+      </TestType>
+      <TestType name="E2E Tests">
+        <Description>End-to-end workflow tests</Description>
+        <Framework>Playwright</Framework>
+        <TestScenarios>
+          <Scenario>Complete transcription workflow</Scenario>
+          <Scenario>Analysis generation and viewing</Scenario>
+          <Scenario>Group and tag management</Scenario>
+          <Scenario>User authentication and authorization</Scenario>
+        </TestScenarios>
+      </TestType>
+      <TestType name="Component Tests">
+        <Description>Tests for UI components</Description>
+        <Framework>React Testing Library</Framework>
+        <Focus>
+          <Area>Component rendering</Area>
+          <Area>User interactions</Area>
+          <Area>State management</Area>
+        </Focus>
+      </TestType>
+    </TestTypes>
+    
+    <TestTools>
+      <Tool name="test-api">
+        <Description>Tool for testing backend API endpoints</Description>
+        <Features>
+          <Feature>Automated API testing</Feature>
+          <Feature>Response validation</Feature>
+          <Feature>Test result summarization</Feature>
+        </Features>
+      </Tool>
+      <Tool name="test-e2e">
+        <Description>Tool for end-to-end integration testing</Description>
+        <Features>
+          <Feature>Real backend integration</Feature>
+          <Feature>Workflow validation</Feature>
+          <Feature>Visual comparison</Feature>
+        </Features>
+      </Tool>
+      <Tool name="test-ui-component">
+        <Description>Tool for testing UI components</Description>
+        <Features>
+          <Feature>Component isolation testing</Feature>
+          <Feature>Interaction simulation</Feature>
+          <Feature>Visual regression testing</Feature>
+        </Features>
+      </Tool>
+    </TestTools>
+  </Testing>
+  
+  <FutureExpansion>
+    <Feature name="Mobile Application">
+      <Description>Native mobile applications for iOS and Android</Description>
+      <Technologies>
+        <Technology>React Native</Technology>
+        <Technology>Expo</Technology>
+      </Technologies>
+      <Timeline>Q4 2025</Timeline>
+    </Feature>
+    <Feature name="Real-Time Collaboration">
+      <Description>Collaborative editing of transcriptions</Description>
+      <Technologies>
+        <Technology>WebSockets</Technology>
+        <Technology>Operational Transformation</Technology>
+      </Technologies>
+      <Timeline>Q2 2026</Timeline>
+    </Feature>
+    <Feature name="Advanced Analytics">
+      <Description>In-depth analytics and insights from transcription data</Description>
+      <Technologies>
+        <Technology>Data visualization libraries</Technology>
+        <Technology>Advanced AI models</Technology>
+      </Technologies>
+      <Timeline>Q3 2025</Timeline>
+    </Feature>
+    <Feature name="API Marketplace">
+      <Description>Marketplace for third-party integrations and plugins</Description>
+      <Technologies>
+        <Technology>OAuth2</Technology>
+        <Technology>API Gateway</Technology>
+      </Technologies>
+      <Timeline>2026</Timeline>
+    </Feature>
+  </FutureExpansion>
+</TranscripterArchitecture>

@@ -1,0 +1,51 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Start MCP Server",
+      "type": "shell",
+      "command": "cd ${workspaceFolder} && npm run server",
+      "problemMatcher": [],
+      "isBackground": true,
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      }
+    },
+    {
+      "label": "Run MCP Client Example",
+      "type": "shell",
+      "command": "cd ${workspaceFolder} && npm run client",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      }
+    },
+    {
+      "label": "Run Full MCP Example (Server + Client)",
+      "type": "shell",
+      "command": "cd ${workspaceFolder} && npm run example",
+      "problemMatcher": [],
+      "isBackground": true,
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      }
+    },
+    {
+      "label": "Run MCP Tests",
+      "type": "shell",
+      "command": "cd ${workspaceFolder} && npm test",
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      },
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      }
+    }
+  ]
+}
