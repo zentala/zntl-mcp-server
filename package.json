@@ -1,0 +1,50 @@
+{
+  "name": "mcp-server",
+  "version": "1.0.0",
+  "description": "MCP Server for Transcripter project",
+  "type": "module",
+  "main": "dist/esm/index.js",
+  "scripts": {
+    "build": "npm run build:esm && npm run build:cjs",
+    "build:esm": "tsc -p tsconfig.prod.json && node -e \"fs.writeFileSync('dist/esm/package.json', JSON.stringify({type:'module'}, null, 2))\"",
+    "build:cjs": "tsc -p tsconfig.cjs.json && node -e \"fs.writeFileSync('dist/cjs/package.json', JSON.stringify({type:'commonjs'}, null, 2))\"",
+    "lint": "eslint src/",
+    "test": "jest",
+    "start": "npm run server",
+    "server": "node src/cli.js server",
+    "client": "node examples/client.js",
+    "news": "node examples/news-example.js",
+    "example": "node src/cli.js server",
+    "clean": "rimraf dist"
+  },
+  "keywords": [
+    "modelcontextprotocol",
+    "mcp"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.7.0",
+    "content-type": "^1.0.5",
+    "cors": "^2.8.5",
+    "express": "^5.0.1",
+    "winston": "^3.12.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/eventsource": "^3.0.0",
+    "@types/express": "^5.0.0",
+    "@types/jest": "^29.5.12",
+    "@types/node": "^22.0.2",
+    "@types/supertest": "^6.0.2",
+    "concurrently": "^8.2.2",
+    "eslint": "^9.8.0",
+    "jest": "^29.7.0",
+    "rimraf": "^5.0.5",
+    "supertest": "^7.1.0",
+    "ts-jest": "^29.2.4",
+    "tsx": "^4.16.5",
+    "typescript": "^5.5.4"
+  }
+}

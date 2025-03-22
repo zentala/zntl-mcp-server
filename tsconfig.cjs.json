@@ -1,0 +1,9 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "module": "node16",
+    "moduleResolution": "node16",
+    "outDir": "./dist/cjs"
+  },
+  "exclude": ["**/*.test.ts", "src/__mocks__/**/*"]
+}
