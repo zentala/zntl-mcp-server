@@ -7,6 +7,7 @@ import { transcriptionSummaryTool } from './transcription-summary.js';
 import { transcriptionSearchTool } from './transcription-search.js';
 import { fetchNewsTool } from './fetch-news.js';
 import { analyzeNewsTool } from './analyze-news.js';
+import { calibratorTool } from './calibrator.js';
 
 // Re-export all tools
 export {
@@ -24,4 +25,5 @@ export const tools = {
   'transcription-search': transcriptionSearchTool,
   'fetch-news': fetchNewsTool,
   'analyze-news': analyzeNewsTool,
+  'calibrator': calibratorTool,
 };

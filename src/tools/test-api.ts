@@ -12,30 +12,41 @@ export interface TestApiResponse {
 
 const testApiSchema = z.object({
   endpoint: z.string().describe('API endpoint to test'),
-  method: z.string().describe('HTTP method to use').default('GET')
+  method: z.string().describe('HTTP method to use').optional().default('GET'),
+  data: z.any().describe('Data to send with the request').optional()
 });
 
 export const testApiTool: ToolDef<typeof testApiSchema, TestApiResponse> = {
   schema: testApiSchema,
-  async execute({ endpoint, method }) {
+  async execute({ endpoint, method, data }) {
     try {
-      // Build URL
-      const url = new URL(`http://localhost:3000/api/${endpoint}`);
+      // Build URL - ensure endpoint starts with /api/
+      const apiEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
+      const apiPath = apiEndpoint.startsWith('/api/') ? apiEndpoint : `/api${apiEndpoint}`;
+      const url = new URL(`http://localhost:3000${apiPath}`);
       
-      // Execute request
-      const response = await fetch(url.toString(), {
+      // Prepare request options
+      const options: RequestInit = {
         method,
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json'
         }
-      });
+      };
+
+      // Add body if data is provided
+      if (data !== undefined) {
+        options.body = JSON.stringify(data);
+      }
       
-      const data = await response.json();
+      // Execute request
+      const response = await fetch(url.toString(), options);
+      
+      const responseData = await response.json();
       
       return {
         status: response.status,
-        data
+        data: responseData
       };
     } catch (error) {
       return {
@@ -48,7 +59,7 @@ export const testApiTool: ToolDef<typeof testApiSchema, TestApiResponse> = {
   },
   metadata: {
     name: 'test-api',
-    description: 'Test API endpoints and return the results',
+    description: 'Tool for testing API endpoints',
     parameters: {
       endpoint: {
         type: 'string',
@@ -57,7 +68,12 @@ export const testApiTool: ToolDef<typeof testApiSchema, TestApiResponse> = {
       method: {
         type: 'string',
         description: 'HTTP method to use',
-        default: 'GET'
+        optional: true
+      },
+      data: {
+        type: 'object',
+        description: 'Data to send with the request',
+        optional: true
       }
     }
   }

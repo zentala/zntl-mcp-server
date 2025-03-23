@@ -70,5 +70,4 @@ app.listen(3001);
 
 
 wtedy mmozemy tak wystaiwac sobie z projektu do servera mpcc nowe narzedzia, co wiecej one sa dosptent ylko w scope danego porjektu. 
-
-ogolnie chce 
+chce aby wykrywalo .mpc.json z katlagu clienta i zwracalo jego contnet do narzezdzia, a naerdzie go logowalo. czykki aby narzedzie mialo dostep do konfiga z pliku z katlogu glownego z jakiego rpo jest opalone

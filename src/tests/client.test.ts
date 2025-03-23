@@ -1,27 +1,54 @@
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { SSEClientTransport } from "@modelcontextprotocol/sdk/client/sse.js";
+import { TestServer } from "./utils/test-server.js";
+import { z } from "zod";
 
-describe('MCP Client E2E Tests', () => {
-  let client: Client;
-  let transport: SSEClientTransport;
+// Helper function to wait
+const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+// Type for server info response
+interface ServerInfo {
+  name: string;
+  version: string;
+  capabilities: {
+    resources: string[];
+  };
+  port: number;
+}
+
+describe('Client Test', () => {
+  let serverInfo: ServerInfo;
+  let testServer: TestServer;
 
   beforeAll(async () => {
-    console.log('🔄 Inicjalizacja klienta MCP...');
-    
-    transport = new SSEClientTransport(
-      new URL("http://localhost:3501/sse"),
-      {
-        requestInit: {
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        }
-      }
-    );
+    serverInfo = {
+      name: "test-server",
+      version: "1.0.0",
+      capabilities: {
+        resources: []
+      },
+      port: 3501
+    };
 
-    // Dodajemy handlery eventów dla transportu
-    transport.onmessage = (msg) => {
-      console.log('📥 Otrzymano wiadomość:', JSON.stringify(msg, null, 2));
+    console.log('🚀 Uruchamianie serwera testowego...');
+    testServer = new TestServer(serverInfo.port);
+    await testServer.start();
+
+    console.log('⏳ Czekam 2 sekundy na pełne uruchomienie serwera...');
+    await wait(2000);
+  });
+
+  afterAll(async () => {
+    console.log('🛑 Zatrzymywanie serwera testowego...');
+    await testServer.stop();
+  });
+
+  it('should connect to the server', async () => {
+    const sseUrl = new URL(`http://localhost:${serverInfo.port}/sse`);
+    const transport = new SSEClientTransport(sseUrl);
+
+    transport.onmessage = (message) => {
+      console.log('📨 Otrzymano wiadomość:', message);
     };
 
     transport.onerror = (error) => {
@@ -29,47 +56,36 @@ describe('MCP Client E2E Tests', () => {
     };
 
     transport.onclose = () => {
-      console.log('🔒 Połączenie zamknięte');
+      console.log('🔒 Transport zamknięty');
     };
 
-    client = new Client(
-      {
-        name: "e2e-test-client",
-        version: "1.0.0"
-      },
-      {
-        capabilities: {
-          tools: {},
-          resources: {}
-        }
-      }
-    );
+    const client = new Client({
+      name: "test-client",
+      version: "1.0.0"
+    });
 
     console.log('🔌 Łączenie z serwerem MCP...');
     await client.connect(transport);
-    console.log('✅ Połączono z serwerem MCP');
 
-    // Pobierz informacje o serwerze
-    const serverInfo = await client.info;
-    console.log('ℹ️ Informacje o serwerze:', JSON.stringify(serverInfo, null, 2));
-  });
-
-  test('powinien wykonać pełny przepływ testowy', async () => {
-    // Test API
-    console.log('🧪 Testowanie test-api...');
-    const testResult = await client.callTool({
-      name: 'test-api',
-      arguments: {
-        endpoint: 'test',
-        method: 'GET'
+    // Inicjalizacja klienta
+    const initResponse = await client.request({
+      method: "initialize",
+      params: {
+        roots: []
       }
-    });
-    console.log('📤 Wynik test-api:', JSON.stringify(testResult, null, 2));
-  });
+    }, z.object({
+      serverInfo: z.object({
+        name: z.string(),
+        version: z.string()
+      })
+    }));
 
-  afterAll(async () => {
+    expect(initResponse).toBeDefined();
+    expect(initResponse.serverInfo.name).toBe('test-mcp-server');
+
+    await wait(1000); // Give some time for connection to establish
+
     console.log('🛑 Zamykanie połączenia...');
-    await transport.close();
-    console.log('👋 Test zakończony');
+    await client.close();
   });
 }); 

@@ -1,10 +1,6 @@
 import winston from 'winston';
 import path from 'path';
-import { fileURLToPath } from 'url';
-
-// Get the directory name of the current module
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+import { dirname } from 'path';
 
 // Configure logger
 const logger = winston.createLogger({
@@ -23,7 +19,7 @@ const logger = winston.createLogger({
     new winston.transports.Console(),
     // Write logs to file
     new winston.transports.File({ 
-      filename: path.join(__dirname, '..', 'logs', 'error.log'), 
+      filename: path.join(process.cwd(), 'logs', 'error.log'), 
       level: 'error',
       format: winston.format.combine(
         winston.format.timestamp(),
@@ -31,7 +27,7 @@ const logger = winston.createLogger({
       )
     }),
     new winston.transports.File({ 
-      filename: path.join(__dirname, '..', 'logs', 'combined.log'),
+      filename: path.join(process.cwd(), 'logs', 'combined.log'),
       format: winston.format.combine(
         winston.format.timestamp(),
         winston.format.json()

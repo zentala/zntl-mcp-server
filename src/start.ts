@@ -59,66 +59,99 @@ Object.entries(resourceProviders).forEach(([scheme, provider]) => {
 // Create Express app
 const app = express();
 app.use(cors());
+app.use(express.json());
 
-let servers: Server[] = [];
+// Create a single server instance
+const server = new Server(serverInfo, { capabilities });
+
+// Error handling middleware
+app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
+  logger.error('Unhandled error:', err);
+  res.status(500).json({
+    error: 'Internal server error',
+    message: err.message
+  });
+});
 
 // SSE endpoint
 app.get("/sse", async (req, res) => {
-  logger.info("Got new SSE connection");
-  logger.info(`Client IP: ${req.ip}`);
-  logger.info(`User Agent: ${req.get('user-agent')}`);
-
-  const transport = new SSEServerTransport("/message", res);
-  const server = new Server(serverInfo, { capabilities });
-
-  servers.push(server);
-
-  server.onclose = () => {
-    logger.info("SSE connection closed");
+  try {
+    logger.info("Got new SSE connection");
     logger.info(`Client IP: ${req.ip}`);
-    servers = servers.filter((s) => s !== server);
-  };
+    logger.info(`User Agent: ${req.get('user-agent')}`);
 
-  await server.connect(transport);
+    const transport = new SSEServerTransport("/message", res);
+
+    server.onclose = () => {
+      logger.info("SSE connection closed");
+      logger.info(`Client IP: ${req.ip}`);
+    };
+
+    await server.connect(transport);
+  } catch (error) {
+    logger.error('Error in SSE endpoint:', error);
+    res.status(500).json({
+      error: 'Internal server error',
+      message: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
 });
 
 // Message endpoint
 app.post("/message", async (req, res) => {
-  logger.info("Received message");
-  logger.info(`Client IP: ${req.ip}`);
-  logger.info(`Message Type: ${req.query.type || 'unknown'}`);
+  try {
+    logger.info("Received message");
+    logger.info(`Client IP: ${req.ip}`);
+    logger.info(`Message Type: ${req.query.type || 'unknown'}`);
+    logger.info(`Message Body:`, req.body);
 
-  const sessionId = req.query.sessionId as string;
-  const transport = servers
-    .map((s) => s.transport as SSEServerTransport)
-    .find((t) => t.sessionId === sessionId);
-  if (!transport) {
-    logger.error(`Session not found: ${sessionId}`);
-    res.status(404).send("Session not found");
-    return;
+    const sessionId = req.query.sessionId as string;
+    const transport = server.transport as SSEServerTransport;
+    
+    if (!transport || transport.sessionId !== sessionId) {
+      logger.error(`Session not found: ${sessionId}`);
+      res.status(404).send("Session not found");
+      return;
+    }
+
+    logger.info(`Processing message for session: ${sessionId}`);
+    await transport.handlePostMessage(req, res);
+    logger.info(`Message processed successfully for session: ${sessionId}`);
+  } catch (error) {
+    logger.error('Error in message endpoint:', error);
+    res.status(500).json({
+      error: 'Internal server error',
+      message: error instanceof Error ? error.message : 'Unknown error'
+    });
   }
-
-  await transport.handlePostMessage(req, res);
 });
 
 // Basic info endpoint
 app.get("/", (req, res) => {
-  logger.info("Info endpoint accessed");
-  logger.info(`Client IP: ${req.ip}`);
-  
-  res.json({
-    name: serverInfo.name,
-    version: serverInfo.version,
-    capabilities: {
-      tools: Object.keys(tools),
-      resources: Object.keys(resourceProviders)
-    }
-  });
+  try {
+    logger.info("Info endpoint accessed");
+    logger.info(`Client IP: ${req.ip}`);
+    
+    res.json({
+      name: serverInfo.name,
+      version: serverInfo.version,
+      capabilities: {
+        tools: Object.keys(tools),
+        resources: Object.keys(resourceProviders)
+      }
+    });
+  } catch (error) {
+    logger.error('Error in info endpoint:', error);
+    res.status(500).json({
+      error: 'Internal server error',
+      message: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
 });
 
 // Start the server
 const port = 3501;
-app.listen(port, () => {
+const httpServer = app.listen(port, () => {
   logger.info("===============================================");
   logger.info(`MCP Server started successfully!`);
   logger.info(`Server Name: ${serverInfo.name}`);
@@ -132,4 +165,21 @@ app.listen(port, () => {
   logger.info("Available Resources:");
   Object.keys(resourceProviders).forEach(resource => logger.info(`  - ${resource}`));
   logger.info("===============================================");
+});
+
+// Handle process termination
+process.on('SIGTERM', () => {
+  logger.info('SIGTERM received. Shutting down gracefully...');
+  httpServer.close(() => {
+    logger.info('Server closed');
+    process.exit(0);
+  });
+});
+
+process.on('SIGINT', () => {
+  logger.info('SIGINT received. Shutting down gracefully...');
+  httpServer.close(() => {
+    logger.info('Server closed');
+    process.exit(0);
+  });
 }); 
